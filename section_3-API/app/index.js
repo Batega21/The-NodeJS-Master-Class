@@ -110,5 +110,6 @@ const unifiedServer = (req, res) => {
 // 9. Define a request routes
 const router = {
     'ping': _handlers.ping,
-    'users': _handlers.users
+    'users': _handlers.users,
+    'tokens': _handlers.tokens
 };

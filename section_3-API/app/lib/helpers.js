@@ -30,6 +30,12 @@ helpers.validateBoolean = (bool) => {
     return validatedBoolean;
 };
 
+// Validate strings from Payload
+helpers.validateId = (str) => {
+    const validatedId = typeof(str) === 'string' && str.trim().length === 20 ? str.trim() : false;
+    return validatedId;
+};
+
 // Create a SHA256 hash
 helpers.hash = str => {
     // Validate string
@@ -49,6 +55,26 @@ helpers.parseJsonToObject = (str) => {
         return obj;
     } catch (error) {
         return {};
+    }
+};
+
+// Create a string with random alphabetic characters, of given length
+helpers.createRandomString = (strLength) => {
+    strLength = typeof(strLength) === 'number' && strLength > 0 ? strLength : false;
+    if (strLength) {
+        // Define all possible character
+        const possibleCharacters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        // Build string
+        let str = '';
+        for (let i = 1; i <= strLength; i++) {
+            // Get random char from possibleCharacters
+            const randomCharacter = possibleCharacters.charAt(Math.floor(Math.random() * possibleCharacters.length));
+            // Append character to the final string
+            str += randomCharacter;
+        }
+        return str;
+    } else {
+        return false;
     }
 };
 

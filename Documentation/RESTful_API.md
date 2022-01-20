@@ -122,3 +122,23 @@ Create a HTTPS folder and create Certificate
 Complete metadata
 Update the config file for each port (http / https)
 Create a unified Server for each protocol
+
+## Create Services
+
+Build services
+
+Ping
+Users - Request and response for each CRUD method
+  Build each abstract method in the data file
+  Create data/users folder
+  Create the handler object with each method
+    Create - post method: read if not !user create
+    Read - get method: read user with unique key
+    Update - put method: read if not !user update with UnK and field
+    Delete - delete method: read user with UnK and delete (fs unlinked)
+
+Tokens - Authentication mechanism. Create a token with Unk and password, and then use the token for each request that will require the Auth.
+  Create the handler
+  Create data/tokens folder
+  Create tokens handler with acceptable methods
+  Create tokens sub methods

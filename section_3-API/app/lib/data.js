@@ -49,7 +49,7 @@ lib.create = (dir, file, data, callback) => {
 // Read data from a file
 lib.read = (dir, file, callback) => {
   fs.readFile(`${lib.baseDir}${dir}/${file}.json`, 'utf8', (err, data) => {
-    if (!err) {
+    if (!err && data) {
       const dataParsed = _helpers.parseJsonToObject(data);
       callback(false, dataParsed);
     } else {
