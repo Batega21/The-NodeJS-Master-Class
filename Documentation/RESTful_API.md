@@ -142,3 +142,25 @@ Tokens - Authentication mechanism. Create a token with Unk and password, and the
   Create data/tokens folder
   Create tokens handler with acceptable methods
   Create tokens sub methods
+
+Checks
+
+Checks a task that checks the URL every times of seconds, tell the dev if the URL is up or down
+  Add checks to the routes
+  Create tokens handler with acceptable methods
+  Create data/checks folder
+  Create the handlers
+  Create Checks service - container
+  Add maxChecks to the config
+  Post: protocol, url, methods, successCode, timeOutSeconds
+    Valid protocol, url, methods, successCode, timeOutSeconds from payload
+    Check if any or else
+    Get token from headers
+    Read token, if or else
+    Get id / phone
+    Read users, if phone or else
+    Find checks for this user (added to the user object data)
+    Validate if user has maxChecks (config.maxChecks) or else
+    Create checkId with random string for this user
+    Create checkObject (No relational data): id: checkId, userPhone, protocol, url, methods, successCode, timeOutSeconds
+    Persist object on Disc - data create
