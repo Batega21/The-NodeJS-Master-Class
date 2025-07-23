@@ -4,14 +4,14 @@
  */
 
 // Dependencies
-var server = require('./lib/server');
-var workers = require('./lib/workers');
+const server = require('./lib/server');
+const workers = require('./lib/workers');
 
 // Declare the app
-var app = {};
+const app = {};
 
 // Init function
-app.init = function(){
+app.init = () => {
 
   // Start the server
   server.init();

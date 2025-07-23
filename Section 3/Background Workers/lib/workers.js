@@ -4,25 +4,25 @@
  */
 
  // Dependencies
-var path = require('path');
-var fs = require('fs');
-var _data = require('./data');
-var https = require('https');
-var http = require('http');
-var helpers = require('./helpers');
-var url = require('url');
+const path = require('path');
+const fs = require('fs');
+const _data = require('./data');
+const https = require('https');
+const http = require('http');
+const helpers = require('./helpers');
+const url = require('url');
 
 // Instantiate the worker module object
-var workers = {};
+const workers = {};
 
 // Lookup all checks, get their data, send to validator
-workers.gatherAllChecks = function(){
+workers.gatherAllChecks = () => {
   // Get all the checks
-  _data.list('checks',function(err,checks){
+  _data.list('checks', (err,checks) => {
     if(!err && checks && checks.length > 0){
-      checks.forEach(function(check){
+      checks.forEach(check => {
         // Read in the check data
-        _data.read('checks',check,function(err,originalCheckData){
+        _data.read('checks',check, (err,originalCheckData) => {
           if(!err && originalCheckData){
             // Pass it to the check validator, and let that function continue the function or log the error(s) as needed
             workers.validateCheckData(originalCheckData);
@@ -39,8 +39,8 @@ workers.gatherAllChecks = function(){
 
 };
 
-// Sanity-check the check-data,
-workers.validateCheckData = function(originalCheckData){
+// Sanity-check input validation
+workers.validateCheckData = originalCheckData => {
   originalCheckData = typeof(originalCheckData) == 'object' && originalCheckData !== null ? originalCheckData : {};
   originalCheckData.id = typeof(originalCheckData.id) == 'string' && originalCheckData.id.trim().length == 20 ? originalCheckData.id.trim() : false;
   originalCheckData.userPhone = typeof(originalCheckData.userPhone) == 'string' && originalCheckData.userPhone.trim().length == 10 ? originalCheckData.userPhone.trim() : false;
@@ -69,24 +69,24 @@ workers.validateCheckData = function(originalCheckData){
 };
 
 // Perform the check, send the originalCheck data and the outcome of the check process to the next step in the process
-workers.performCheck = function(originalCheckData){
+workers.performCheck = originalCheckData => {
 
-  // Prepare the intial check outcome
-  var checkOutcome = {
+  // Prepare the initial check outcome
+  const checkOutcome = {
     'error' : false,
     'responseCode' : false
   };
 
   // Mark that the outcome has not been sent yet
-  var outcomeSent = false;
+  const outcomeSent = false;
 
   // Parse the hostname and path out of the originalCheckData
-  var parsedUrl = url.parse(originalCheckData.protocol+'://'+originalCheckData.url, true);
-  var hostName = parsedUrl.hostname;
-  var path = parsedUrl.path; // Using path not pathname because we want the query string
+  const parsedUrl = url.parse(originalCheckData.protocol+'://'+originalCheckData.url, true);
+  const hostName = parsedUrl.hostname;
+  const path = parsedUrl.path; // Using path not pathname because we want the query string
 
   // Construct the request
-  var requestDetails = {
+  const requestDetails = {
     'protocol' : originalCheckData.protocol+':',
     'hostname' : hostName,
     'method' : originalCheckData.method.toUpperCase(),
@@ -95,10 +95,10 @@ workers.performCheck = function(originalCheckData){
   };
 
   // Instantiate the request object (using either the http or https module)
-  var _moduleToUse = originalCheckData.protocol == 'http' ? http : https;
-  var req = _moduleToUse.request(requestDetails,function(res){
+  const _moduleToUse = originalCheckData.protocol == 'http' ? http : https;
+  const req = _moduleToUse.request(requestDetails,function(res){
       // Grab the status of the sent request
-      var status =  res.statusCode;
+      const status =  res.statusCode;
 
       // Update the checkOutcome and pass the data along
       checkOutcome.responseCode = status;
@@ -137,13 +137,13 @@ workers.performCheck = function(originalCheckData){
 workers.processCheckOutcome = function(originalCheckData,checkOutcome){
 
   // Decide if the check is considered up or down
-  var state = !checkOutcome.error && checkOutcome.responseCode && originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ? 'up' : 'down';
+  const state = !checkOutcome.error && checkOutcome.responseCode && originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ? 'up' : 'down';
 
   // Decide if an alert is warranted
-  var alertWarranted = originalCheckData.lastChecked && originalCheckData.state !== state ? true : false;
+  const alertWarranted = originalCheckData.lastChecked && originalCheckData.state !== state ? true : false;
 
   // Update the check data
-  var newCheckData = originalCheckData;
+  const newCheckData = originalCheckData;
   newCheckData.state = state;
   newCheckData.lastChecked = Date.now();
 
@@ -164,7 +164,7 @@ workers.processCheckOutcome = function(originalCheckData,checkOutcome){
 
 // Alert the user as to a change in their check status
 workers.alertUserToStatusChange = function(newCheckData){
-  var msg = 'Alert: Your check for '+newCheckData.method.toUpperCase()+' '+newCheckData.protocol+'://'+newCheckData.url+' is currently '+newCheckData.state;
+  const msg = 'Alert: Your check for '+newCheckData.method.toUpperCase()+' '+newCheckData.protocol+'://'+newCheckData.url+' is currently '+newCheckData.state;
   helpers.sendTwilioSms(newCheckData.userPhone,msg,function(err){
     if(!err){
       console.log("Success: User was alerted to a status change in their check, via sms: ",msg);
